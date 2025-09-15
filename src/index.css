@@ -1,3 +1,86 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Portfolio theme variables */
+:root {
+  --portfolio-primary: #64748b;
+  --portfolio-secondary: #0ea5e9;
+  --portfolio-accent: #10b981;
+}
+/* Print styles for resume */
+@media print {
+  .resume-template {
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0.5in !important;
+    width: 8.5in !important;
+    min-height: 11in !important;
+    font-size: 12px !important;
+  }
+  
+  .resume-template * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  .print\\:p-6 {
+    padding: 1.5rem !important;
+  }
+  
+  .print\\:shadow-none {
+    box-shadow: none !important;
+  }
+  
+  .print\\:mb-4 {
+    margin-bottom: 1rem !important;
+  }
+  
+  .print\\:text-2xl {
+    font-size: 1.5rem !important;
+  }
+  
+  .print\\:mb-3 {
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .print\\:gap-3 {
+    gap: 0.75rem !important;
+  }
+  
+  .print\\:h-3 {
+    height: 0.75rem !important;
+  }
+  
+  .print\\:w-3 {
+    width: 0.75rem !important;
+  }
+  
+  .print\\:mt-2 {
+    margin-top: 0.5rem !important;
+  }
+  
+  .print\\:mb-2 {
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .print\\:space-y-3 > * + * {
+    margin-top: 0.75rem !important;
+  }
+  
+  .print\\:space-y-2 > * + * {
+    margin-top: 0.5rem !important;
+  }
+  
+  .print\\:space-y-1 > * + * {
+    margin-top: 0.25rem !important;
+  }
+  
+  .print\\:ml-2 {
+    margin-left: 0.5rem !important;
+  }
+  
+  .print\\:no-underline {
+    text-decoration: none !important;
+  }
+}
