@@ -9,6 +9,7 @@ import Signup from './components/auth/Signup';
 import Dashboard from './pages/Dashboard';
 import ResumeBuilder from './pages/ResumeBuilder';
 import PortfolioViewer from './pages/PortfolioViewer';
+import SharedPortfolio from './pages/SharedPortfolio';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -75,6 +76,12 @@ function App() {
                 <Route
                   path="/portfolio"
                   element={<PortfolioViewer darkMode={darkMode} setDarkMode={setDarkMode} />}
+                />
+                
+                {/* Shared Portfolio route */}
+                <Route
+                  path="/portfolio/:slug"
+                  element={<SharedPortfolio />}
                 />
                 
                 {/* Catch all route */}
