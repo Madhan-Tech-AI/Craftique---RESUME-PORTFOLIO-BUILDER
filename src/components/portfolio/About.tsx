@@ -29,7 +29,7 @@ const About: React.FC<AboutProps> = ({
           <div 
             className="w-20 h-1 mx-auto"
             style={{
-              background: `linear-gradient(to right, ${theme.primaryColor}, ${theme.secondaryColor})`
+              background: `linear-gradient(to right, var(--portfolio-primary, ${theme.primaryColor}), var(--portfolio-secondary, ${theme.secondaryColor}))`
             }}
           ></div>
         </div>
@@ -41,7 +41,7 @@ const About: React.FC<AboutProps> = ({
               <div 
                 className="w-80 h-80 mx-auto rounded-full flex items-center justify-center text-white text-6xl font-bold shadow-2xl"
                 style={{
-                  background: `linear-gradient(135deg, ${theme.primaryColor}, ${theme.secondaryColor})`
+                  background: `linear-gradient(135deg, var(--portfolio-primary, ${theme.primaryColor}), var(--portfolio-secondary, ${theme.secondaryColor}))`
                 }}
               >
                 {personalInfo.fullName ? personalInfo.fullName.charAt(0) : 'U'}
@@ -49,7 +49,7 @@ const About: React.FC<AboutProps> = ({
               <div 
                 className="absolute inset-0 w-80 h-80 mx-auto rounded-full animate-pulse"
                 style={{
-                  background: `linear-gradient(135deg, ${theme.primaryColor}20, ${theme.secondaryColor}20)`
+                  background: `linear-gradient(135deg, var(--portfolio-primary, ${theme.primaryColor})20, var(--portfolio-secondary, ${theme.secondaryColor})20)`
                 }}
               ></div>
             </div>
@@ -61,7 +61,7 @@ const About: React.FC<AboutProps> = ({
               <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
                 {personalInfo.fullName || 'Your Name'}
               </h3>
-              <p className="text-xl font-medium mb-4" style={{ color: theme.secondaryColor }}>Full Stack Developer</p>
+              <p className="text-xl font-medium mb-4" style={{ color: `var(--portfolio-secondary, ${theme.secondaryColor})` }}>Full Stack Developer</p>
             </div>
 
             {personalInfo.objective && (
@@ -74,7 +74,7 @@ const About: React.FC<AboutProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
               {personalInfo.email && (
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: theme.primaryColor }}>
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: `var(--portfolio-primary, ${theme.primaryColor})` }}>
                     <Mail className="h-4 w-4 text-white" />
                   </div>
                   <div>
@@ -86,7 +86,7 @@ const About: React.FC<AboutProps> = ({
 
               {personalInfo.phone && (
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: theme.secondaryColor }}>
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: `var(--portfolio-secondary, ${theme.secondaryColor})` }}>
                     <Phone className="h-4 w-4 text-white" />
                   </div>
                   <div>
@@ -98,7 +98,7 @@ const About: React.FC<AboutProps> = ({
 
               {personalInfo.location && (
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: theme.accentColor }}>
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: `var(--portfolio-accent, ${theme.accentColor})` }}>
                     <MapPin className="h-4 w-4 text-white" />
                   </div>
                   <div>
@@ -117,7 +117,7 @@ const About: React.FC<AboutProps> = ({
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-12 h-12 text-white rounded-full flex items-center justify-center transition-colors"
-                  style={{ backgroundColor: theme.primaryColor }}
+                  style={{ backgroundColor: `var(--portfolio-primary, ${theme.primaryColor})` }}
                 >
                   <Linkedin className="h-5 w-5" />
                 </a>
@@ -128,7 +128,7 @@ const About: React.FC<AboutProps> = ({
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-12 h-12 text-white rounded-full flex items-center justify-center transition-colors"
-                  style={{ backgroundColor: theme.secondaryColor }}
+                  style={{ backgroundColor: `var(--portfolio-secondary, ${theme.secondaryColor})` }}
                 >
                   <Github className="h-5 w-5" />
                 </a>
@@ -139,7 +139,7 @@ const About: React.FC<AboutProps> = ({
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-12 h-12 text-white rounded-full flex items-center justify-center transition-colors"
-                  style={{ backgroundColor: theme.accentColor }}
+                  style={{ backgroundColor: `var(--portfolio-accent, ${theme.accentColor})` }}
                 >
                   <Globe className="h-5 w-5" />
                 </a>
