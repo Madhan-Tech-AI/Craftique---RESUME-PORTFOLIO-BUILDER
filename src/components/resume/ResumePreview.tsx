@@ -104,7 +104,7 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({ darkMode = false }) => {
 
       {/* Customization Panel */}
       {showCustomization && (
-        <div className="p-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div className="p-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 max-h-96 overflow-y-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Color Presets */}
             <div>
@@ -218,12 +218,16 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({ darkMode = false }) => {
       )}
 
       {/* Resume Preview */}
-      <div className="flex-1 overflow-auto p-4 bg-gray-100 dark:bg-gray-900">
+      <div className="flex-1 overflow-auto p-2 bg-gray-100 dark:bg-gray-900">
         <div className="max-w-4xl mx-auto">
           <div 
             ref={resumeRef}
-            className="transform scale-90 origin-top"
-            style={{ width: '111.11%' }}
+            className="transform scale-75 origin-top w-full"
+            style={{ 
+              transformOrigin: 'top center',
+              width: '133.33%',
+              marginLeft: '-16.67%'
+            }}
           >
             <ResumeTemplate 
               data={resumeData} 
