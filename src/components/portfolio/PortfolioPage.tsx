@@ -8,7 +8,7 @@ import Projects from './Projects';
 import Certifications from './Certifications';
 import Achievements from './Achievements';
 import Contact from './Contact';
-import { Menu, X, Moon, Sun } from 'lucide-react';
+import { Menu, X, Moon, Sun, Share2, Download, Palette } from 'lucide-react';
 
 interface PortfolioPageProps {
   darkMode?: boolean;
@@ -19,6 +19,12 @@ const PortfolioPage: React.FC<PortfolioPageProps> = ({ darkMode = false, setDark
   const { resumeData } = useResume();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('about');
+  const [showCustomization, setShowCustomization] = useState(false);
+  const [portfolioTheme, setPortfolioTheme] = useState({
+    primaryColor: '#64748b',
+    secondaryColor: '#0ea5e9',
+    accentColor: '#10b981'
+  });
 
   const navItems = [
     { id: 'about', label: 'About' },
@@ -58,15 +64,72 @@ const PortfolioPage: React.FC<PortfolioPageProps> = ({ darkMode = false, setDark
     setIsMenuOpen(false);
   };
 
+  const sharePortfolio = async () => {
+    const portfolioUrl = window.location.href;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${resumeData.personalInfo.fullName}'s Portfolio`,
+          text: 'Check out my professional portfolio',
+          url: portfolioUrl,
+        });
+      } catch (error) {
+        console.log('Error sharing:', error);
+      }
+    } else {
+      // Fallback to clipboard
+      try {
+        await navigator.clipboard.writeText(portfolioUrl);
+        alert('Portfolio link copied to clipboard!');
+      } catch (error) {
+        console.log('Error copying to clipboard:', error);
+      }
+    }
+  };
+
+  const exportPortfolio = async () => {
+    try {
+      const { generatePortfolioPDF } = await import('../../utils/pdfGenerator');
+      const portfolioElement = document.getElementById('portfolio-content');
+      if (portfolioElement) {
+        await generatePortfolioPDF(portfolioElement, resumeData.personalInfo);
+      }
+    } catch (error) {
+      console.error('Error exporting portfolio:', error);
+      alert('Error exporting portfolio. Please try again.');
+    }
+  };
+
+  const colorThemes = [
+    { name: 'Professional', primary: '#64748b', secondary: '#0ea5e9', accent: '#10b981' },
+    { name: 'Modern', primary: '#1e40af', secondary: '#3b82f6', accent: '#8b5cf6' },
+    { name: 'Creative', primary: '#7c3aed', secondary: '#a855f7', accent: '#ec4899' },
+    { name: 'Nature', primary: '#059669', secondary: '#10b981', accent: '#f59e0b' },
+    { name: 'Sunset', primary: '#ea580c', secondary: '#f97316', accent: '#ef4444' },
+    { name: 'Ocean', primary: '#0891b2', secondary: '#06b6d4', accent: '#3b82f6' }
+  ];
+
   return (
-    <div className={`portfolio-page ${darkMode ? 'dark' : ''}`}>
+    <div className={`portfolio-page ${darkMode ? 'dark' : ''}`} id="portfolio-content">
+      <style jsx>{`
+        :root {
+          --portfolio-primary: ${portfolioTheme.primaryColor};
+          --portfolio-secondary: ${portfolioTheme.secondaryColor};
+          --portfolio-accent: ${portfolioTheme.accentColor};
+        }
+      `}</style>
+
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-slate-500 to-sky-500 rounded-lg flex items-center justify-center">
+              <div 
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ background: `linear-gradient(135deg, ${portfolioTheme.primaryColor}, ${portfolioTheme.secondaryColor})` }}
+              >
                 <span className="text-white font-bold text-sm">
                   {resumeData.personalInfo.fullName?.charAt(0) || 'U'}
                 </span>
@@ -84,17 +147,42 @@ const PortfolioPage: React.FC<PortfolioPageProps> = ({ darkMode = false, setDark
                   onClick={() => scrollToSection(item.id)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     activeSection === item.id
-                      ? 'bg-slate-500 text-white'
-                      : 'text-gray-700 dark:text-gray-300 hover:text-slate-600 dark:hover:text-slate-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+                      ? 'text-white'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                   }`}
+                  style={activeSection === item.id ? { backgroundColor: portfolioTheme.primaryColor } : {}}
                 >
                   {item.label}
                 </button>
               ))}
             </div>
 
-            {/* Theme Toggle & Mobile Menu */}
-            <div className="flex items-center space-x-4">
+            {/* Controls */}
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setShowCustomization(!showCustomization)}
+                className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                title="Customize Theme"
+              >
+                <Palette className="h-5 w-5" />
+              </button>
+              
+              <button
+                onClick={sharePortfolio}
+                className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                title="Share Portfolio"
+              >
+                <Share2 className="h-5 w-5" />
+              </button>
+
+              <button
+                onClick={exportPortfolio}
+                className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                title="Export as PDF"
+              >
+                <Download className="h-5 w-5" />
+              </button>
+
               {setDarkMode && (
                 <button
                   onClick={() => setDarkMode(!darkMode)}
@@ -123,9 +211,10 @@ const PortfolioPage: React.FC<PortfolioPageProps> = ({ darkMode = false, setDark
                     onClick={() => scrollToSection(item.id)}
                     className={`px-4 py-2 text-left rounded-lg text-sm font-medium transition-colors ${
                       activeSection === item.id
-                        ? 'bg-slate-500 text-white'
-                        : 'text-gray-700 dark:text-gray-300 hover:text-slate-600 dark:hover:text-slate-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+                        ? 'text-white'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                     }`}
+                    style={activeSection === item.id ? { backgroundColor: portfolioTheme.primaryColor } : {}}
                   >
                     {item.label}
                   </button>
@@ -136,17 +225,113 @@ const PortfolioPage: React.FC<PortfolioPageProps> = ({ darkMode = false, setDark
         </div>
       </nav>
 
+      {/* Customization Panel */}
+      {showCustomization && (
+        <div className="fixed top-16 right-4 z-40 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-4 w-80">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Customize Portfolio</h3>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Color Theme
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {colorThemes.map((theme, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setPortfolioTheme({
+                      primaryColor: theme.primary,
+                      secondaryColor: theme.secondary,
+                      accentColor: theme.accent
+                    })}
+                    className="flex items-center space-x-2 p-2 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    <div className="flex space-x-1">
+                      <div 
+                        className="w-3 h-3 rounded-full" 
+                        style={{ backgroundColor: theme.primary }}
+                      ></div>
+                      <div 
+                        className="w-3 h-3 rounded-full" 
+                        style={{ backgroundColor: theme.secondary }}
+                      ></div>
+                      <div 
+                        className="w-3 h-3 rounded-full" 
+                        style={{ backgroundColor: theme.accent }}
+                      ></div>
+                    </div>
+                    <span className="text-xs text-gray-700 dark:text-gray-300">
+                      {theme.name}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Primary Color
+                </label>
+                <input
+                  type="color"
+                  value={portfolioTheme.primaryColor}
+                  onChange={(e) => setPortfolioTheme(prev => ({ ...prev, primaryColor: e.target.value }))}
+                  className="w-full h-8 rounded border border-gray-300 dark:border-gray-600"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Secondary Color
+                </label>
+                <input
+                  type="color"
+                  value={portfolioTheme.secondaryColor}
+                  onChange={(e) => setPortfolioTheme(prev => ({ ...prev, secondaryColor: e.target.value }))}
+                  className="w-full h-8 rounded border border-gray-300 dark:border-gray-600"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Accent Color
+                </label>
+                <input
+                  type="color"
+                  value={portfolioTheme.accentColor}
+                  onChange={(e) => setPortfolioTheme(prev => ({ ...prev, accentColor: e.target.value }))}
+                  className="w-full h-8 rounded border border-gray-300 dark:border-gray-600"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Hero Section */}
-      <section className="pt-16 min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="pt-16 min-h-screen flex items-center justify-center relative overflow-hidden">
+        <div 
+          className="absolute inset-0 opacity-10"
+          style={{
+            background: `linear-gradient(135deg, ${portfolioTheme.primaryColor}, ${portfolioTheme.secondaryColor}, ${portfolioTheme.accentColor})`
+          }}
+        ></div>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <div className="mb-8">
-            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-slate-500 to-sky-500 rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-2xl mb-6">
+            <div 
+              className="w-32 h-32 mx-auto rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-2xl mb-6"
+              style={{
+                background: `linear-gradient(135deg, ${portfolioTheme.primaryColor}, ${portfolioTheme.secondaryColor})`
+              }}
+            >
               {resumeData.personalInfo.fullName?.charAt(0) || 'U'}
             </div>
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4">
               {resumeData.personalInfo.fullName || 'Your Name'}
             </h1>
-            <p className="text-xl md:text-2xl text-sky-500 font-medium mb-6">
+            <p 
+              className="text-xl md:text-2xl font-medium mb-6"
+              style={{ color: portfolioTheme.secondaryColor }}
+            >
               Full Stack Developer & Designer
             </p>
             {resumeData.personalInfo.objective && (
@@ -159,7 +344,10 @@ const PortfolioPage: React.FC<PortfolioPageProps> = ({ darkMode = false, setDark
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => scrollToSection('contact')}
-              className="bg-gradient-to-r from-slate-500 to-sky-500 text-white px-8 py-3 rounded-lg font-medium hover:from-slate-600 hover:to-sky-600 transition-all duration-200 transform hover:-translate-y-1"
+              className="text-white px-8 py-3 rounded-lg font-medium transition-all duration-200 transform hover:-translate-y-1"
+              style={{
+                background: `linear-gradient(135deg, ${portfolioTheme.primaryColor}, ${portfolioTheme.secondaryColor})`
+              }}
             >
               Get In Touch
             </button>
@@ -174,21 +362,26 @@ const PortfolioPage: React.FC<PortfolioPageProps> = ({ darkMode = false, setDark
       </section>
 
       {/* Portfolio Sections */}
-      <About personalInfo={resumeData.personalInfo} darkMode={darkMode} />
-      <Skills skills={resumeData.skills} darkMode={darkMode} />
-      <Experience experience={resumeData.experience} darkMode={darkMode} />
-      <Education education={resumeData.education} darkMode={darkMode} />
-      <Projects projects={resumeData.projects} darkMode={darkMode} />
-      <Certifications certifications={resumeData.certifications} darkMode={darkMode} />
-      <Achievements achievements={resumeData.achievements} darkMode={darkMode} />
-      <Contact personalInfo={resumeData.personalInfo} darkMode={darkMode} />
+      <About personalInfo={resumeData.personalInfo} darkMode={darkMode} theme={portfolioTheme} />
+      <Skills skills={resumeData.skills} darkMode={darkMode} theme={portfolioTheme} />
+      <Experience experience={resumeData.experience} darkMode={darkMode} theme={portfolioTheme} />
+      <Education education={resumeData.education} darkMode={darkMode} theme={portfolioTheme} />
+      <Projects projects={resumeData.projects} darkMode={darkMode} theme={portfolioTheme} />
+      <Certifications certifications={resumeData.certifications} darkMode={darkMode} theme={portfolioTheme} />
+      <Achievements achievements={resumeData.achievements} darkMode={darkMode} theme={portfolioTheme} />
+      <Contact personalInfo={resumeData.personalInfo} darkMode={darkMode} theme={portfolioTheme} />
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="flex items-center justify-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-slate-500 to-sky-500 rounded-lg flex items-center justify-center">
+              <div 
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{
+                  background: `linear-gradient(135deg, ${portfolioTheme.primaryColor}, ${portfolioTheme.secondaryColor})`
+                }}
+              >
                 <span className="text-white font-bold text-sm">
                   {resumeData.personalInfo.fullName?.charAt(0) || 'U'}
                 </span>
