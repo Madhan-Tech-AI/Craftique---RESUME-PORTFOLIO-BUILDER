@@ -1,0 +1,76 @@
+{
+  "id": "default-template",
+  "name": "Professional Template",
+  "description": "Clean and professional resume template suitable for most industries",
+  "thumbnail": "/templates/default-thumbnail.jpg",
+  "category": "professional",
+  "settings": {
+    "primaryColor": "#64748b",
+    "secondaryColor": "#0ea5e9",
+    "fontFamily": "Inter",
+    "fontSize": {
+      "body": "14px",
+      "heading": "18px",
+      "name": "28px"
+    },
+    "spacing": {
+      "section": "24px",
+      "item": "16px"
+    },
+    "layout": {
+      "columns": 1,
+      "showBorder": true,
+      "showIcons": true
+    }
+  },
+  "sections": [
+    {
+      "id": "header",
+      "name": "Header",
+      "required": true,
+      "fields": ["fullName", "email", "phone", "location", "linkedIn", "github", "portfolio"]
+    },
+    {
+      "id": "objective",
+      "name": "Objective",
+      "required": false,
+      "fields": ["objective"]
+    },
+    {
+      "id": "skills",
+      "name": "Technical Skills",
+      "required": false,
+      "fields": ["skills"]
+    },
+    {
+      "id": "experience",
+      "name": "Professional Experience",
+      "required": false,
+      "fields": ["experience"]
+    },
+    {
+      "id": "projects",
+      "name": "Projects",
+      "required": false,
+      "fields": ["projects"]
+    },
+    {
+      "id": "education",
+      "name": "Education",
+      "required": false,
+      "fields": ["education"]
+    },
+    {
+      "id": "certifications",
+      "name": "Certifications",
+      "required": false,
+      "fields": ["certifications"]
+    },
+    {
+      "id": "achievements",
+      "name": "Achievements",
+      "required": false,
+      "fields": ["achievements"]
+    }
+  ]
+}
