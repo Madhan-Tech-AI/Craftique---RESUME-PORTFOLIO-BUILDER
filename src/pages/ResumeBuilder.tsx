@@ -33,14 +33,14 @@ const ResumeBuilder: React.FC = () => {
         </div>
 
         {/* Split Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100vh-200px)]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[calc(100vh-200px)]">
           {/* Form Panel */}
-          <div className="overflow-auto">
+          <div className="overflow-auto h-[calc(100vh-200px)]">
             <ResumeForm />
           </div>
 
           {/* Preview Panel */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 h-[calc(100vh-200px)]">
             <ResumePreview />
           </div>
         </div>
