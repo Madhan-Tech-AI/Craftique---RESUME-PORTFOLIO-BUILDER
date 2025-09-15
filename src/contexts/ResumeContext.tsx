@@ -36,7 +36,10 @@ export const useResume = () => {
   return context;
 };
 
-export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ResumeProvider: React.FC<{ 
+  children: React.ReactNode;
+  value?: ResumeContextType;
+}> = ({ children, value }) => {
   const [resumeData, setResumeData] = useState<ResumeData>(initialResumeData);
 
   const updateResumeData = (data: Partial<ResumeData>) => {
@@ -47,8 +50,14 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setResumeData(initialResumeData);
   };
 
+  const contextValue = value || {
+    resumeData,
+    updateResumeData,
+    resetResumeData
+  };
+
   return (
-    <ResumeContext.Provider value={{ resumeData, updateResumeData, resetResumeData }}>
+    <ResumeContext.Provider value={contextValue}>
       {children}
     </ResumeContext.Provider>
   );
