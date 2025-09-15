@@ -30,7 +30,7 @@ const Skills: React.FC<SkillsProps> = ({
           <div 
             className="w-20 h-1 mx-auto"
             style={{
-              background: `linear-gradient(to right, ${theme.primaryColor}, ${theme.secondaryColor})`
+              background: `linear-gradient(to right, var(--portfolio-primary, ${theme.primaryColor}), var(--portfolio-secondary, ${theme.secondaryColor}))`
             }}
           ></div>
         </div>
@@ -44,7 +44,7 @@ const Skills: React.FC<SkillsProps> = ({
               <div className="flex items-center mb-4">
                 <div 
                   className="w-12 h-12 rounded-lg flex items-center justify-center mr-4"
-                  style={{ background: `linear-gradient(135deg, ${theme.primaryColor}, ${theme.secondaryColor})` }}
+                  style={{ background: `linear-gradient(135deg, var(--portfolio-primary, ${theme.primaryColor}), var(--portfolio-secondary, ${theme.secondaryColor}))` }}
                 >
                   <span className="text-white font-bold text-lg">
                     {skillCategory.category.charAt(0)}
@@ -61,9 +61,9 @@ const Skills: React.FC<SkillsProps> = ({
                     key={skillIndex}
                     className="inline-block px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium transition-colors hover:text-white"
                     style={{
-                      '--hover-bg': theme.accentColor
+                      '--hover-bg': `var(--portfolio-accent, ${theme.accentColor})`
                     } as React.CSSProperties}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = theme.accentColor}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `var(--portfolio-accent, ${theme.accentColor})`}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}
                   >
                     {skill}
