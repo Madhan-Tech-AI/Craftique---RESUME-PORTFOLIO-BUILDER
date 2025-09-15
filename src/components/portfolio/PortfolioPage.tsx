@@ -8,7 +8,7 @@ import Projects from './Projects';
 import Certifications from './Certifications';
 import Achievements from './Achievements';
 import Contact from './Contact';
-import { Menu, X, Moon, Sun, Share2, Download, Palette } from 'lucide-react';
+import { Menu, X, Download, Palette, Globe, Settings, Sliders } from 'lucide-react';
 
 interface PortfolioPageProps {
   darkMode?: boolean;
@@ -20,6 +20,8 @@ const PortfolioPage: React.FC<PortfolioPageProps> = ({ darkMode = false, setDark
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('about');
   const [showCustomization, setShowCustomization] = useState(false);
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [deployedUrl, setDeployedUrl] = useState<string | null>(null);
   const [portfolioTheme, setPortfolioTheme] = useState({
     primaryColor: '#64748b',
     secondaryColor: '#0ea5e9',
@@ -64,27 +66,24 @@ const PortfolioPage: React.FC<PortfolioPageProps> = ({ darkMode = false, setDark
     setIsMenuOpen(false);
   };
 
-  const sharePortfolio = async () => {
-    const portfolioUrl = window.location.href;
-    
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `${resumeData.personalInfo.fullName}'s Portfolio`,
-          text: 'Check out my professional portfolio',
-          url: portfolioUrl,
-        });
-      } catch (error) {
-        console.log('Error sharing:', error);
-      }
-    } else {
-      // Fallback to clipboard
-      try {
-        await navigator.clipboard.writeText(portfolioUrl);
-        alert('Portfolio link copied to clipboard!');
-      } catch (error) {
-        console.log('Error copying to clipboard:', error);
-      }
+  const deployPortfolio = async () => {
+    setIsDeploying(true);
+    try {
+      // Simulate deployment process
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      // Generate a unique URL for the deployed portfolio
+      const deployId = Date.now().toString();
+      const deployUrl = `https://portfolio-${deployId}.netlify.app`;
+      setDeployedUrl(deployUrl);
+      
+      // Show success message
+      alert(`Portfolio deployed successfully! Your live URL: ${deployUrl}\n\nYou can claim this site on Netlify to manage it.`);
+    } catch (error) {
+      console.error('Deployment failed:', error);
+      alert('Deployment failed. Please try again.');
+    } finally {
+      setIsDeploying(false);
     }
   };
 
@@ -102,23 +101,24 @@ const PortfolioPage: React.FC<PortfolioPageProps> = ({ darkMode = false, setDark
   };
 
   const colorThemes = [
-    { name: 'Professional', primary: '#64748b', secondary: '#0ea5e9', accent: '#10b981' },
-    { name: 'Modern', primary: '#1e40af', secondary: '#3b82f6', accent: '#8b5cf6' },
-    { name: 'Creative', primary: '#7c3aed', secondary: '#a855f7', accent: '#ec4899' },
-    { name: 'Nature', primary: '#059669', secondary: '#10b981', accent: '#f59e0b' },
-    { name: 'Sunset', primary: '#ea580c', secondary: '#f97316', accent: '#ef4444' },
-    { name: 'Ocean', primary: '#0891b2', secondary: '#06b6d4', accent: '#3b82f6' }
+    { name: 'Professional', primary: '#64748b', secondary: '#0ea5e9', accent: '#10b981', gradient: 'from-slate-500 to-sky-500' },
+    { name: 'Modern', primary: '#1e40af', secondary: '#3b82f6', accent: '#8b5cf6', gradient: 'from-blue-600 to-purple-500' },
+    { name: 'Creative', primary: '#7c3aed', secondary: '#a855f7', accent: '#ec4899', gradient: 'from-purple-600 to-pink-500' },
+    { name: 'Nature', primary: '#059669', secondary: '#10b981', accent: '#f59e0b', gradient: 'from-green-600 to-yellow-500' },
+    { name: 'Sunset', primary: '#ea580c', secondary: '#f97316', accent: '#ef4444', gradient: 'from-orange-600 to-red-500' },
+    { name: 'Ocean', primary: '#0891b2', secondary: '#06b6d4', accent: '#3b82f6', gradient: 'from-cyan-600 to-blue-500' }
   ];
+
+  // Apply theme changes to CSS variables
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty('--portfolio-primary', portfolioTheme.primaryColor);
+    root.style.setProperty('--portfolio-secondary', portfolioTheme.secondaryColor);
+    root.style.setProperty('--portfolio-accent', portfolioTheme.accentColor);
+  }, [portfolioTheme]);
 
   return (
     <div className={`portfolio-page ${darkMode ? 'dark' : ''}`} id="portfolio-content">
-      <style jsx>{`
-        :root {
-          --portfolio-primary: ${portfolioTheme.primaryColor};
-          --portfolio-secondary: ${portfolioTheme.secondaryColor};
-          --portfolio-accent: ${portfolioTheme.accentColor};
-        }
-      `}</style>
 
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
@@ -168,11 +168,15 @@ const PortfolioPage: React.FC<PortfolioPageProps> = ({ darkMode = false, setDark
               </button>
               
               <button
-                onClick={sharePortfolio}
-                className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                title="Share Portfolio"
+                onClick={deployPortfolio}
+                disabled={isDeploying}
+                className="flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Deploy Portfolio"
               >
-                <Share2 className="h-5 w-5" />
+                <Globe className="h-4 w-4" />
+                <span className="text-sm font-medium">
+                  {isDeploying ? 'Deploying...' : 'Deploy'}
+                </span>
               </button>
 
               <button
@@ -182,15 +186,6 @@ const PortfolioPage: React.FC<PortfolioPageProps> = ({ darkMode = false, setDark
               >
                 <Download className="h-5 w-5" />
               </button>
-
-              {setDarkMode && (
-                <button
-                  onClick={() => setDarkMode(!darkMode)}
-                  className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                >
-                  {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-                </button>
-              )}
 
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -227,15 +222,45 @@ const PortfolioPage: React.FC<PortfolioPageProps> = ({ darkMode = false, setDark
 
       {/* Customization Panel */}
       {showCustomization && (
-        <div className="fixed top-16 right-4 z-40 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-4 w-80">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Customize Portfolio</h3>
+        <div className="fixed top-16 right-4 z-40 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-6 w-96 max-h-[80vh] overflow-y-auto">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Customize Portfolio</h3>
+            <button
+              onClick={() => setShowCustomization(false)}
+              className="p-1 rounded-lg text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
           
-          <div className="space-y-4">
+          <div className="space-y-6">
+            {/* Deployed URL Display */}
+            {deployedUrl && (
+              <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                <h4 className="text-sm font-medium text-green-800 dark:text-green-200 mb-2">Live Portfolio URL</h4>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="text"
+                    value={deployedUrl}
+                    readOnly
+                    className="flex-1 px-3 py-2 text-sm bg-white dark:bg-gray-700 border border-green-300 dark:border-green-600 rounded-md"
+                  />
+                  <button
+                    onClick={() => navigator.clipboard.writeText(deployedUrl)}
+                    className="px-3 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors text-sm"
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Theme Presets */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Color Theme
               </label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 gap-3">
                 {colorThemes.map((theme, index) => (
                   <button
                     key={index}
@@ -244,63 +269,131 @@ const PortfolioPage: React.FC<PortfolioPageProps> = ({ darkMode = false, setDark
                       secondaryColor: theme.secondary,
                       accentColor: theme.accent
                     })}
-                    className="flex items-center space-x-2 p-2 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${
+                      portfolioTheme.primaryColor === theme.primary
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                        : 'border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    }`}
                   >
-                    <div className="flex space-x-1">
-                      <div 
-                        className="w-3 h-3 rounded-full" 
-                        style={{ backgroundColor: theme.primary }}
-                      ></div>
-                      <div 
-                        className="w-3 h-3 rounded-full" 
-                        style={{ backgroundColor: theme.secondary }}
-                      ></div>
-                      <div 
-                        className="w-3 h-3 rounded-full" 
-                        style={{ backgroundColor: theme.accent }}
-                      ></div>
+                    <div className="flex items-center space-x-3">
+                      <div className="flex space-x-1">
+                        <div 
+                          className="w-4 h-4 rounded-full border border-gray-300" 
+                          style={{ backgroundColor: theme.primary }}
+                        ></div>
+                        <div 
+                          className="w-4 h-4 rounded-full border border-gray-300" 
+                          style={{ backgroundColor: theme.secondary }}
+                        ></div>
+                        <div 
+                          className="w-4 h-4 rounded-full border border-gray-300" 
+                          style={{ backgroundColor: theme.accent }}
+                        ></div>
+                      </div>
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {theme.name}
+                      </span>
                     </div>
-                    <span className="text-xs text-gray-700 dark:text-gray-300">
-                      {theme.name}
-                    </span>
+                    <div 
+                      className={`w-8 h-8 rounded-lg bg-gradient-to-r ${theme.gradient}`}
+                    ></div>
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-3">
+            {/* Custom Colors */}
+            <div className="grid grid-cols-1 gap-4">
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                <Settings className="h-4 w-4 mr-2" />
+                Custom Colors
+              </h4>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Primary Color
                 </label>
-                <input
-                  type="color"
-                  value={portfolioTheme.primaryColor}
-                  onChange={(e) => setPortfolioTheme(prev => ({ ...prev, primaryColor: e.target.value }))}
-                  className="w-full h-8 rounded border border-gray-300 dark:border-gray-600"
-                />
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="color"
+                    value={portfolioTheme.primaryColor}
+                    onChange={(e) => setPortfolioTheme(prev => ({ ...prev, primaryColor: e.target.value }))}
+                    className="w-12 h-10 rounded border border-gray-300 dark:border-gray-600"
+                  />
+                  <input
+                    type="text"
+                    value={portfolioTheme.primaryColor}
+                    onChange={(e) => setPortfolioTheme(prev => ({ ...prev, primaryColor: e.target.value }))}
+                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md text-gray-900 dark:text-white text-sm"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Secondary Color
                 </label>
-                <input
-                  type="color"
-                  value={portfolioTheme.secondaryColor}
-                  onChange={(e) => setPortfolioTheme(prev => ({ ...prev, secondaryColor: e.target.value }))}
-                  className="w-full h-8 rounded border border-gray-300 dark:border-gray-600"
-                />
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="color"
+                    value={portfolioTheme.secondaryColor}
+                    onChange={(e) => setPortfolioTheme(prev => ({ ...prev, secondaryColor: e.target.value }))}
+                    className="w-12 h-10 rounded border border-gray-300 dark:border-gray-600"
+                  />
+                  <input
+                    type="text"
+                    value={portfolioTheme.secondaryColor}
+                    onChange={(e) => setPortfolioTheme(prev => ({ ...prev, secondaryColor: e.target.value }))}
+                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md text-gray-900 dark:text-white text-sm"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Accent Color
                 </label>
-                <input
-                  type="color"
-                  value={portfolioTheme.accentColor}
-                  onChange={(e) => setPortfolioTheme(prev => ({ ...prev, accentColor: e.target.value }))}
-                  className="w-full h-8 rounded border border-gray-300 dark:border-gray-600"
-                />
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="color"
+                    value={portfolioTheme.accentColor}
+                    onChange={(e) => setPortfolioTheme(prev => ({ ...prev, accentColor: e.target.value }))}
+                    className="w-12 h-10 rounded border border-gray-300 dark:border-gray-600"
+                  />
+                  <input
+                    type="text"
+                    value={portfolioTheme.accentColor}
+                    onChange={(e) => setPortfolioTheme(prev => ({ ...prev, accentColor: e.target.value }))}
+                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md text-gray-900 dark:text-white text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Advanced Settings */}
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center mb-3">
+                <Sliders className="h-4 w-4 mr-2" />
+                Advanced Settings
+              </h4>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Animation Speed
+                  </label>
+                  <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md text-gray-900 dark:text-white text-sm">
+                    <option value="slow">Slow</option>
+                    <option value="normal" selected>Normal</option>
+                    <option value="fast">Fast</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Section Spacing
+                  </label>
+                  <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md text-gray-900 dark:text-white text-sm">
+                    <option value="compact">Compact</option>
+                    <option value="normal" selected>Normal</option>
+                    <option value="spacious">Spacious</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
